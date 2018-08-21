@@ -6,6 +6,7 @@
 #include <iostream>
 
 const GLint WIDTH = 1280, HEIGHT = 720;
+const GLint START_X = 100, START_Y = 100;
 
 void WriteErrorMessage(const char* msg)
 {
@@ -15,17 +16,18 @@ void WriteErrorMessage(const char* msg)
 int main()
 {
 
+    /*
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         WriteErrorMessage("SLD initialisation failed!");
         return -1;
     }
 
-    SDL_Window *mainWindow = SDL_CreateWindow("asdf",
-                                       100,
-                                       100,
-                                       640,
-                                       480,
+    SDL_Window *mainWindow = SDL_CreateWindow("SDL Window",
+                                       START_X,
+                                       START_Y,
+                                       WIDTH,
+                                       HEIGHT,
                                        SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
     if(!mainWindow)
@@ -88,57 +90,9 @@ int main()
     SDL_DestroyWindow(mainWindow);
     SDL_Quit();
 
-    /*
-    if(!glfwInit())
-    {
-        printf("GLFW INIT");
-        return 1;
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-    GLFWwindow *mainWindow = glfwCreateWindow(WIDTH, HEIGHT, "title", nullptr, nullptr);
-
-    if(!mainWindow)
-    {
-        printf("WINDOW INIT FAILED");
-        glfwTerminate();
-        return 2;
-    }
-
-    int bufferWidth, bufferHeight;
-
-    glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
-
-    glfwMakeContextCurrent(mainWindow);
-
-    glewExperimental = GL_TRUE;
-
-    if(glewInit() != GLEW_OK)
-    {
-        printf("GLEW INIT FAILED");
-        glfwDestroyWindow(mainWindow);
-        glfwTerminate();
-        return 3;
-    }
-
-    glViewport(0, 0, bufferWidth, bufferHeight);
-
-    while(!glfwWindowShouldClose(mainWindow))
-    {
-        glfwPollEvents();
-
-        glClearColor(0.3f, 0.1f, 0.8f, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glfwSwapBuffers(mainWindow);
-    }
-
-    glfwDestroyWindow(mainWindow);
-    glfwTerminate();
     */
+
+
+
     return 0;
 }
