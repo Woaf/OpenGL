@@ -130,7 +130,7 @@ int main()
 
     glViewport(0, 0, bufferWidth, bufferHeight);
 
-    while(!glfwWindowShouldClose(mainWindow) || quit)
+    while(!glfwWindowShouldClose(mainWindow))
     {
         glfwPollEvents();
 
