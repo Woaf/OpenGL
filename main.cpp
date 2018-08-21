@@ -92,7 +92,55 @@ int main()
 
     */
 
+    if(!glfwInit())
+    {
+        WriteErrorMessage("GLFW initialisation failed!");
+        return 1;
+    }
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
+    GLFWwindow *mainWindow = glfwCreateWindow(WIDTH, HEIGHT, "GLFW WINDOW", nullptr, nullptr);
+
+    if(!mainWindow)
+    {
+        WriteErrorMessage("WINDOW initialisation failed!");
+        glfwTerminate();
+        return 2;
+    }
+
+    int bufferWidth, bufferHeight;
+
+    glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
+
+    glfwMakeContextCurrent(mainWindow);
+
+    glewExperimental = GL_TRUE;
+
+    if(glewInit() != GLEW_OK)
+    {
+        WriteErrorMessage("GLEW initialisation failed!");
+        glfwDestroyWindow(mainWindow);
+        glfwTerminate();
+        return 3;
+    }
+
+    glViewport(0, 0, bufferWidth, bufferHeight);
+
+    while(!glfwWindowShouldClose(mainWindow) || quit)
+    {
+        glfwPollEvents();
+
+        glClearColor(0.3f, 0.4f, 0.6f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glfwSwapBuffers(mainWindow);
+    }
+
+    glfwDestroyWindow(mainWindow);
+    glfwTerminate();
     return 0;
 }
