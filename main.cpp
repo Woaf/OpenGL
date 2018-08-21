@@ -3,14 +3,21 @@
 #include <SDL2/SDL.h>
 
 #include <stdio.h>
-#include <iostream>
 
 const GLint WIDTH = 1280, HEIGHT = 720;
 const GLint START_X = 100, START_Y = 100;
 
+bool quit = false;
+
 void WriteErrorMessage(const char* msg)
 {
     fprintf(stderr, "%s\n", msg);
+}
+
+void exitCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        quit = true;
 }
 
 int main()
@@ -130,11 +137,13 @@ int main()
 
     glViewport(0, 0, bufferWidth, bufferHeight);
 
-    while(!glfwWindowShouldClose(mainWindow))
+    glfwSetKeyCallback(mainWindow, exitCallback);
+
+    while(!glfwWindowShouldClose(mainWindow) && !quit)
     {
         glfwPollEvents();
 
-        glClearColor(0.3f, 0.4f, 0.6f, 1.0f);
+        glClearColor(0.3f, 0.5f, 0.8f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glfwSwapBuffers(mainWindow);
