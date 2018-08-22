@@ -58,6 +58,11 @@ LIBS += -lGLEW -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -l
 ```
 These libraries both include GLEW, GLFW, and SDL2.
 
+## Install GLM libraries
+All you have to do to use the GLM packages, is to install GLM via Terminal.
+`sudo apt-get install libglm-dev`
+I think, if you also want the documentation for it, then you can install `sudo apt-get install libglm-doc` as well, but I'm not sure about this.
+
 ## Your set-up is ready! 
 You can begin coding now :) 
 
