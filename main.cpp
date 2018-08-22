@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 
 #include <stdio.h>
+#include <cmath>
 
 #include <string>
 
@@ -11,7 +12,9 @@ const GLint START_X = 100, START_Y = 100;
 
 static bool quit = false;
 
-static GLuint VAO, VBO, shader;
+static GLuint VAO, VBO, shader, uniformXMove, uniformYMove;
+
+float xMove = 0.0f, yMove = 0.0f;
 
 void WriteErrorMessage(const char* msg)
 {
@@ -24,26 +27,27 @@ void exitCallback(GLFWwindow* window, int key, int scancode, int action, int mod
         quit = true;
 }
 
-static const char* vShader = "#version  330\n\
+static const char* vShader = "#version 330\n\
 layout (location = 0) in vec3 pos;\n\
+uniform float xmover, ymover;\n\
 void main()\n\
 {\n\
-    gl_Position = vec4(pos, 1.0f);\n\
+    gl_Position = vec4(pos.x + xmover, pos.y+ymover, pos.z, 1.0f);\n\
 }";
 
 static const char* fShader = "#version 330\n\
 out vec4 col;\n\
 void main()\n\
 {\n\
-    col = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n\
+    col = vec4(0.2f, 0.9f, 0.6f, 1.0f);\n\
 }";
 
-void CreateTriangle()
+void createTriangle()
 {
     GLfloat vertices[] = {
         -1.0f, -1.0f, 0.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, 1.0f, 0.0
+        1.0f, -1.0, 0.0f,
+        0.0f, 1.0f, 0.0f
     };
 
     glGenVertexArrays(1, &VAO);
@@ -53,15 +57,14 @@ void CreateTriangle()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     glBindVertexArray(0);
 }
 
-void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType)
+void addShader(GLuint theProgram, const char* shaderCode, GLenum shaderType)
 {
     GLuint theShader = glCreateShader(shaderType);
 
@@ -75,40 +78,41 @@ void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType)
     glCompileShader(theShader);
 
     GLint result = 0;
-    GLchar eLog[1024] = {0};
+    GLchar elog[1024] = {0};
 
     glGetShaderiv(theShader, GL_COMPILE_STATUS, &result);
     if(!result)
     {
-        glGetShaderInfoLog(theShader, sizeof(eLog), NULL, eLog);
-        WriteErrorMessage(eLog);
+        glGetShaderInfoLog(theShader, sizeof(elog), nullptr, elog);
+        WriteErrorMessage("ERROR linking shader!");
         return;
     }
+
     glAttachShader(theProgram, theShader);
 }
 
-void CompileShaders()
+void compileShader()
 {
     shader = glCreateProgram();
 
     if(!shader)
     {
-        WriteErrorMessage("Error creating the shader program");
+        WriteErrorMessage("Error creating SHADER PROGRAM!");
         return;
     }
 
-    AddShader(shader, vShader, GL_VERTEX_SHADER);
-    AddShader(shader, fShader, GL_FRAGMENT_SHADER);
+    addShader(shader, vShader, GL_VERTEX_SHADER);
+    addShader(shader, fShader, GL_FRAGMENT_SHADER);
 
     GLint result = 0;
-    GLchar eLog[1024] = {0};
+    GLchar elog[1024] = {0};
 
     glLinkProgram(shader);
     glGetProgramiv(shader, GL_LINK_STATUS, &result);
     if(!result)
     {
-        glGetProgramInfoLog(shader, sizeof (eLog), NULL, eLog);
-        WriteErrorMessage("Error creating shader");
+        glGetProgramInfoLog(shader, sizeof(elog), nullptr, elog);
+        WriteErrorMessage("ERROR linking shader!");
         return;
     }
 
@@ -116,10 +120,13 @@ void CompileShaders()
     glGetProgramiv(shader, GL_VALIDATE_STATUS, &result);
     if(!result)
     {
-        glGetProgramInfoLog(shader, sizeof (eLog), NULL, eLog);
-        WriteErrorMessage("Error creating shader");
+        glGetProgramInfoLog(shader, sizeof(elog), nullptr, elog);
+        WriteErrorMessage("ERROR validating shader!");
         return;
     }
+
+    uniformXMove = glGetUniformLocation(shader, "xmover");
+    uniformYMove = glGetUniformLocation(shader, "ymover");
 }
 
 int main()
@@ -203,7 +210,7 @@ int main()
 
     if(!glfwInit())
     {
-        WriteErrorMessage("GLFW initialisation failed!");
+        WriteErrorMessage("GLFW initialisation error!");
         return 1;
     }
 
@@ -212,11 +219,11 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    GLFWwindow *mainWindow = glfwCreateWindow(WIDTH, HEIGHT, "GLFW WINDOW", nullptr, nullptr);
+    GLFWwindow* mainWindow = glfwCreateWindow(WIDTH, HEIGHT, "GLFW WINDOW", nullptr, nullptr);
 
     if(!mainWindow)
     {
-        WriteErrorMessage("WINDOW initialisation failed!");
+        WriteErrorMessage("WINDOW initialisation failed");
         glfwTerminate();
         return 2;
     }
@@ -241,24 +248,30 @@ int main()
 
     glfwSetKeyCallback(mainWindow, exitCallback);
 
-    CreateTriangle();
-    CompileShaders();
+    createTriangle();
+    compileShader();
 
     while(!glfwWindowShouldClose(mainWindow) && !quit)
     {
         glfwPollEvents();
 
+        xMove += 0.001f;
+        yMove += 0.001f;
 
-        glClearColor(0.3f, 0.5f, 0.8f, 1.0f);
+        glClearColor(0.2f, 0.5f, 0.8f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shader);
 
+        glUniform1f(uniformXMove, sin(xMove));
+        glUniform1f(uniformYMove, cos(yMove));
+
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
-        glBindVertexArray(0);
 
+        glBindVertexArray(0);
         glUseProgram(0);
+
         glfwSwapBuffers(mainWindow);
     }
 
