@@ -40,6 +40,10 @@ out vec4 col;\n\
 void main()\n\
 {\n\
     col = vec4(0.2f, 0.9f, 0.6f, 1.0f);\n\
+    if(gl_FragCoord.x*gl_FragCoord.x + gl_FragCoord.y*gl_FragCoord.y > 1000000.0f) \n\
+    { \n\
+        col = vec4(1.0f);\n\
+    }\n\
 }";
 
 void createTriangle()
