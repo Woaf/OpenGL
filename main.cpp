@@ -1,10 +1,15 @@
 #include <GL/glew.h>
+
 #include <GLFW/glfw3.h>
+
 #include <SDL2/SDL.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <stdio.h>
 #include <cmath>
-
 #include <string>
 
 const GLint WIDTH = 1280, HEIGHT = 720;
@@ -12,9 +17,11 @@ const GLint START_X = 100, START_Y = 100;
 
 static bool quit = false;
 
-static GLuint VAO, VBO, shader, uniformXMove, uniformYMove;
+static GLuint VAO, VBO, shader, uniformModel;
 
 float xMove = 0.0f, yMove = 0.0f;
+
+static float IN_RADIANS = M_PI / 180.0f;
 
 void WriteErrorMessage(const char* msg)
 {
@@ -29,10 +36,10 @@ void exitCallback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 static const char* vShader = "#version 330\n\
 layout (location = 0) in vec3 pos;\n\
-uniform float xmover, ymover;\n\
+uniform mat4 model;\n\
 void main()\n\
 {\n\
-    gl_Position = vec4(pos.x + xmover, pos.y+ymover, pos.z, 1.0f);\n\
+    gl_Position = model * vec4(pos, 1.0f);\n\
 }";
 
 static const char* fShader = "#version 330\n\
@@ -40,9 +47,13 @@ out vec4 col;\n\
 void main()\n\
 {\n\
     col = vec4(0.2f, 0.9f, 0.6f, 1.0f);\n\
-    if(gl_FragCoord.x*gl_FragCoord.x + gl_FragCoord.y*gl_FragCoord.y > 1000000.0f) \n\
+    if(gl_FragCoord.x*gl_FragCoord.x + gl_FragCoord.y*gl_FragCoord.y > 500000.0f) \n\
     { \n\
         col = vec4(1.0f);\n\
+    }\n\
+    if(gl_FragCoord.x*gl_FragCoord.x + gl_FragCoord.y*gl_FragCoord.y > 1000000.0f) \n\
+    { \n\
+        col = vec4(0.0f);\n\
     }\n\
 }";
 
@@ -129,8 +140,8 @@ void compileShader()
         return;
     }
 
-    uniformXMove = glGetUniformLocation(shader, "xmover");
-    uniformYMove = glGetUniformLocation(shader, "ymover");
+    uniformModel = glGetUniformLocation(shader, "model");
+
 }
 
 int main()
@@ -259,16 +270,21 @@ int main()
     {
         glfwPollEvents();
 
-        xMove += 0.001f;
-        yMove += 0.001f;
+        xMove += 0.0005f;
+        yMove += 0.0005f;
 
         glClearColor(0.2f, 0.5f, 0.8f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shader);
 
-        glUniform1f(uniformXMove, sin(xMove));
-        glUniform1f(uniformYMove, cos(yMove));
+        glm::mat4 model(1.0f);
+        model = glm::translate(model, glm::vec3(sin(xMove), cos(yMove), 0.0f));
+        model = glm::rotate(model, xMove * 3.6f * IN_RADIANS, glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.4f));
+
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
 
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
