@@ -19,7 +19,8 @@ LIBS += -lGLEW -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -l
 
 SOURCES += \
         main.cpp \
-    mesh.cpp
+    mesh.cpp \
+    shader.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -27,7 +28,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    mesh.h
+    mesh.h \
+    shader.h
 
 DISTFILES += \
-    SDL_WindowCreation
+    Resources/shader.vert \
+    Resources/shader.frag \
+    Resources/SDL_WindowCreation.txt
