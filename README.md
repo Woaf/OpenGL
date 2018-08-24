@@ -2,6 +2,7 @@
 A project to hold what I have learned in a Udemy online course
 
 ## Installing GLFW
+GLFW and SDL are libraries that help creating a context (or a window) that you can draw OpenGL stuff in. Both of them are very useful, but make sure to use only one of them. Esentially, both of these libraries help you not only create a window for OpenGL, but they also handle user inputs so you can interact with your graphics application.
 
 To install GLFW on your system, follow the following steps from: http://web.eecs.umich.edu/~sugih/courses/eecs487/glut-howto/glfw/
 
@@ -46,6 +47,11 @@ The last three libraries are needed on Ubuntu 14.04.1.
 To install it on other operating systems, visit the link above.
 
 ## Installing SDL (and GLEW, if your QT doesn't have it for some reason)
+SDL know a whole bunch more than GLFW, but its also a bit more complicated to use (in my opinion). To demonstrate the difference, I will leave the SDL implementation in the main.cpp source, along with the GLFW implementation, so you can compare it for yourself. For begginers, I would recommend using GLFW, and once they get the hang of it, they might want to move on to SDL.
+
+GLEW is a library that helps you write OpenGL code. Remember, OpenGL is not a package nor a library - but its a specification of HOW code should be written and passed on to your GPU. GLEW is "the bridge" between your CPU and your GPU. (But do NOT quote me on that one! :D )
+
+To install:
 ```
 sudo apt-get install libsdl2-2.0
 sudo apt-get install libsdl2-dev
@@ -59,6 +65,8 @@ LIBS += -lGLEW -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -l
 These libraries both include GLEW, GLFW, and SDL2.
 
 ## Install GLM libraries
+GLM stands for "Graphics Language Maths" and it is a library filled with mathematical structures along with their operations. This library helps you create vectros, matrices, and whatnot so you do not have to define these operations yourself.
+
 All you have to do to use the GLM packages, is to install GLM via Terminal `sudo apt-get install libglm-dev`.
 
 I think, if you also want the documentation for it, then you can `sudo apt-get install libglm-doc` as well, but I'm not sure about this.
