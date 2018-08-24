@@ -11,17 +11,22 @@
 #include <stdio.h>
 #include <cmath>
 #include <string>
+#include <vector>
+
+#include <mesh.h>
 
 const GLint WIDTH = 1280, HEIGHT = 720;
 const GLint START_X = 100, START_Y = 100;
 
 static bool quit = false;
 
-static GLuint VAO, VBO, IBO, shader, uniformModel, uniformProj;
+static GLuint shader, uniformModel, uniformProj;
 
 float xMove = 0.0f, yMove = 0.0f;
 
 static float IN_RADIANS = M_PI / 180.0f;
+
+static std::vector<Mesh*> meshList;
 
 void WriteErrorMessage(const char* msg)
 {
@@ -51,14 +56,6 @@ in vec4 vCol;\n\
 void main()\n\
 {\n\
     col = vCol;\n\
-    if(gl_FragCoord.x*gl_FragCoord.x + gl_FragCoord.y*gl_FragCoord.y > 500000.0f) \n\
-    { \n\
-        col = vec4(1.0f);\n\
-    }\n\
-    if(gl_FragCoord.x*gl_FragCoord.x + gl_FragCoord.y*gl_FragCoord.y > 1000000.0f) \n\
-    { \n\
-        col = vec4(0.0f);\n\
-    }\n\
 }";
 
 void createTriangle()
@@ -77,24 +74,9 @@ void createTriangle()
         0.0f, 1.0f, 0.0f
     };
 
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-    glGenBuffers(1, &IBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    glBindVertexArray(0);
+    Mesh *obj1 = new Mesh();
+    obj1->CreateMesh(vertices, indices, 12, 12);
+    meshList.push_back(obj1);
 }
 
 void addShader(GLuint theProgram, const char* shaderCode, GLenum shaderType)
@@ -160,87 +142,10 @@ void compileShader()
 
     uniformModel = glGetUniformLocation(shader, "model");
     uniformModel = glGetUniformLocation(shader, "proj");
-
 }
 
 int main()
 {
-
-    /*
-    if(SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-        WriteErrorMessage("SLD initialisation failed!");
-        return -1;
-    }
-
-    SDL_Window *mainWindow = SDL_CreateWindow("SDL Window",
-                                       START_X,
-                                       START_Y,
-                                       WIDTH,
-                                       HEIGHT,
-                                       SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-
-    if(!mainWindow)
-    {
-        WriteErrorMessage("WINDOW initialisation failed!");
-        SDL_Quit();
-        return -2;
-    }
-
-    int bufferWidth, bufferHeight;
-
-    SDL_GetWindowSize(mainWindow, &bufferWidth, &bufferHeight);
-
-    SDL_GLContext context = SDL_GL_CreateContext(mainWindow);
-
-    if(!context)
-    {
-        WriteErrorMessage("Context creation error");
-        return -3;
-    }
-
-    glewExperimental = GL_TRUE;
-
-    if(glewInit() != GLEW_OK)
-    {
-        WriteErrorMessage("GLEW initialisation failed");
-        return -4;
-    }
-
-    glViewport(0, 0, bufferWidth, bufferHeight);
-
-    bool quit = false;
-    SDL_Event event;
-
-    while(!quit)
-    {
-
-        while(SDL_PollEvent(&event))
-        {
-            switch (event.type) {
-                case(SDL_QUIT):
-                    quit = true;
-                    break;
-                case(SDL_KEYDOWN):
-                    if(event.key.keysym.sym == SDLK_ESCAPE)
-                    {
-                        quit = true;
-                    }
-                break;
-
-            }
-        }
-
-        glClearColor(0.2f, 0.5f, 0.9f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        SDL_GL_SwapWindow(mainWindow);
-    }
-
-    SDL_DestroyWindow(mainWindow);
-    SDL_Quit();
-
-    */
 
     if(!glfwInit())
     {
@@ -301,20 +206,15 @@ int main()
         glUseProgram(shader);
 
         glm::mat4 model(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(sin(0), 0.0f, 0.0f));
         model = glm::rotate(model, xMove * 3.6f * IN_RADIANS, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.6f));
+        model = glm::scale(model, glm::vec3(0.8f));
 
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(uniformProj, 1, GL_FALSE, glm::value_ptr(model));
 
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+        meshList[0]->RenderMesh();
 
-        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
         glUseProgram(0);
 
         glfwSwapBuffers(mainWindow);
