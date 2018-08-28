@@ -77,4 +77,6 @@ I think, if you also want the documentation for it, then you can `sudo apt-get i
 You can begin coding now :) 
 
 ## Bugs that I don't udnerstand
-For some reason, linking "-lglfw3" did not seem to work, although it should be that. Instead, removing the "3" from the end seemed to solve the problem. [EDIT: I later installed the environment on my PC, and it worked with `-lglfw3`, so I guess if you seem to have a library linking error, then the first thing you should try is either removing or adding "3" at the end of the glfw linkage.]
+For some reason, linking "-lglfw3" did not seem to work, although it should be that. Instead, removing the "3" from the end seemed to solve the problem. 
+
+[EDIT: I later installed the environment on my PC, and it worked with `-lglfw3`, so I guess if you seem to have a library linking error, then the first thing you should try is either removing or adding "3" at the end of the glfw linkage. Also, I fouind that if you seem to have an error with some symbols in a .so library file while building the project, then adding `-ldl` to the linking libraries solves the problem. This is the first time it did that to me, but it did seem to solve this problem.]
