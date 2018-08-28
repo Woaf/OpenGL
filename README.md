@@ -17,6 +17,8 @@ You should now have:
 /usr/include/GL
 /usr/lib/x86_64-linux-gnu/libGL.so
 
+[WOAF EDIT: Now, you should download the zipped GLFW package from its official website. You can download and unzip it anywhere on your computer. The following steps require you to install GLFW from the unzipped folder. After the installation, the downloaded zip and the unzipped package is no longer required.]
+
 At the time of writing, the GLFW package one gets with apt-get is version 2.7 whereas we're using version 3.0.4. So we need to install GLFW from source. Unzip the source file and change your working directory to the glfw-3.0.4 directory. Install GLFW:
 
 cd glfw-3.0.4
@@ -75,4 +77,4 @@ I think, if you also want the documentation for it, then you can `sudo apt-get i
 You can begin coding now :) 
 
 ## Bugs that I don't udnerstand
-For some reason, linking "-lglfw3" did not seem to work, although it should be that. Instead, removing the "3" from the end seemed to solve the problem.
+For some reason, linking "-lglfw3" did not seem to work, although it should be that. Instead, removing the "3" from the end seemed to solve the problem. [EDIT: I later installed the environment on my PC, and it worked with `-lglfw3`, so I guess if you seem to have a library linking error, then the first thing you should try is either removing or adding "3" at the end of the glfw linkage.]
