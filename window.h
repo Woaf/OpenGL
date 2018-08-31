@@ -9,22 +9,21 @@
 class Window
 {
 public:
-    Window();
-    Window(GLint windowWidth, GLint windowHeight);
+    Window() : width (720), height(400) {}
+    Window(GLint windowWidth, GLint windowHeight) : width(windowWidth), height(windowHeight) {}
 
     int Initialise();
+    GLFWwindow* getWindow() {return mainWindow;}
     GLfloat getBufferWidth() {return bufferWidth;}
     GLfloat getBufferHeight() {return bufferHeight;}
     bool getShouldClose() {return glfwWindowShouldClose(mainWindow);}
-
     void swapBuffers() { glfwSwapBuffers(mainWindow);}
 
-    ~Window();
+    ~Window() { glfwDestroyWindow(mainWindow); glfwTerminate(); }
 private:
-    GLFWwindow *mainWindow;
+    GLFWwindow* mainWindow;
 
-    GLint width, height;
-    GLint bufferWidth, bufferHeight;
+    GLint width, height, bufferWidth, bufferHeight;
 };
 
 #endif // WINDOW_H

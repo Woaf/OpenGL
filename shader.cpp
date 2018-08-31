@@ -31,7 +31,7 @@ std::string Shader::ReadFile(const char *fileLocation)
 
     if(!fileStream.is_open())
     {
-        printf("Filed to read %s! File does not exist", fileLocation);
+        printf("Failed to read %s! File does not exist", fileLocation);
         return "";
     }
 
@@ -46,12 +46,12 @@ std::string Shader::ReadFile(const char *fileLocation)
     return content;
 }
 
-GLuint Shader::GetProjectionLocation()
+GLint Shader::GetProjectionLocation()
 {
     return uniformProj;
 }
 
-GLuint Shader::GetModelLocation()
+GLint Shader::GetModelLocation()
 {
     return uniformModel;
 }
@@ -113,7 +113,7 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
     }
 
     uniformModel = glGetUniformLocation(shaderID, "model");
-    uniformModel = glGetUniformLocation(shaderID, "proj");
+    uniformProj = glGetUniformLocation(shaderID, "proj");
 }
 
 void Shader::AddShader(GLuint theProgram, const char *shaderCode, GLenum shaderType)
