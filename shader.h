@@ -19,13 +19,15 @@ public:
 
     GLint GetProjectionLocation();
     GLint GetModelLocation();
+    GLint GetViewLocation();
+
     void UseShader();
     void ClearShader();
 
     ~Shader();
 
 private:
-    GLint uniformProj, uniformModel;
+    GLint uniformProj, uniformModel, uniformView;
     GLuint shaderID;
 
     void CompileShader(const char* vertexCode, const char* fragmentCode);
