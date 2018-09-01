@@ -1,8 +1,8 @@
 # OpenGL
-A project to hold what I have learned in a Udemy online course
+A project, to show what I have learned in a Udemy online course
 
 ## Installing GLFW
-GLFW and SDL are libraries that help creating a context (or a window) that you can draw OpenGL stuff in. Both of them are very useful, but make sure to use only one of them. Esentially, both of these libraries help you not only create a window for OpenGL, but they also handle user inputs so you can interact with your graphics application.
+GLFW and SDL are libraries that help creating a context (or a window) that you can draw OpenGL stuff in. Both of them are very useful, but make sure to use only one of them. Esentially, both of these libraries help you not only create a window for OpenGL, but they also handle user inputs, so you can interact with your graphics application.
 
 To install GLFW on your system, follow the following steps from: http://web.eecs.umich.edu/~sugih/courses/eecs487/glut-howto/glfw/
 
@@ -48,8 +48,8 @@ The last three libraries are needed on Ubuntu 14.04.1.
 ```
 To install it on other operating systems, visit the link above.
 
-## Installing SDL (and GLEW, if your QT doesn't have it for some reason)
-SDL know a whole bunch more than GLFW, but its also a bit more complicated to use (in my opinion). To demonstrate the difference, I will leave the SDL implementation in the main.cpp source, along with the GLFW implementation, so you can compare it for yourself. For begginers, I would recommend using GLFW, and once they get the hang of it, they might want to move on to SDL.
+## Installing SDL and GLEW
+SDL knows a whole bunch more than GLFW, but its also a bit more complicated to use (in my opinion). To demonstrate the difference, I will leave the SDL implementation in a Txt file within the Resources folder. For begginers, I would recommend using GLFW, and once they want to move onto more comlicated stuff, use SDL.
 
 GLEW is a library that helps you write OpenGL code. Remember, OpenGL is not a package nor a library - but its a specification of HOW code should be written and passed on to your GPU. GLEW is "the bridge" between your CPU and your GPU. (But do NOT quote me on that one! :D )
 
@@ -62,7 +62,7 @@ sudo apt-get install libglew-dev
 ## Linking the libraries in the QMake file
 Add the following line to your .pro file.
 ```
-LIBS += -lGLEW -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -lSDL2
+LIBS += -lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -lSDL2 -ldl
 ```
 These libraries both include GLEW, GLFW, and SDL2.
 
@@ -79,4 +79,4 @@ You can begin coding now :)
 ## Bugs that I don't udnerstand
 For some reason, linking "-lglfw3" did not seem to work, although it should be that. Instead, removing the "3" from the end seemed to solve the problem. 
 
-[EDIT: I later installed the environment on my PC, and it worked with `-lglfw3`, so I guess if you seem to have a library linking error, then the first thing you should try is either removing or adding "3" at the end of the glfw linkage. Also, I fouind that if you seem to have an error with some symbols in a .so library file while building the project, then adding `-ldl` to the linking libraries solves the problem. This is the first time it did that to me, but it did seem to solve this problem.]
+[EDIT: I later installed the environment on my PC, and it worked with `-lglfw3`, so I guess if you seem to have a library linking error, then the first thing you should try is either removing or adding "3" at the end of the glfw linkage. Also, I found that if you seem to have an error with some symbols in a .so library file while building the project, then adding `-ldl` to the linking libraries solves the problem.]
