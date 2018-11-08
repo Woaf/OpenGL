@@ -17,9 +17,16 @@ public:
     void CreateFromFiles(const char* vertexLocation, const char* fragLocation);
     std::string ReadFile(const char* fileLocation);
 
-    GLint GetProjectionLocation();
-    GLint GetModelLocation();
-    GLint GetViewLocation();
+    GLuint GetProjectionLocation();
+    GLuint GetModelLocation();
+    GLuint GetViewLocation();
+    GLuint GetEyePositionLocation();
+    GLuint GetAmbientIntensityLocation();
+    GLuint GetAmbientColorLocation();
+    GLuint GetDiffuseIntensityLocation();
+    GLuint GetDirectionLocation();
+    GLuint GetSpecularIntensityLocation();
+    GLuint GetShininessLocation();
 
     void UseShader();
     void ClearShader();
@@ -27,7 +34,10 @@ public:
     ~Shader();
 
 private:
-    GLint uniformProj, uniformModel, uniformView;
+    GLuint uniformProj, uniformModel, uniformView, uniformEyePosition,
+    uniformAmbientIntensity, uniformAmbientColor,
+    uniformDiffuseIntensity, uniformDirection,
+    uniformSpecularIntensity, uniformShininess;
     GLuint shaderID;
 
     void CompileShader(const char* vertexCode, const char* fragmentCode);

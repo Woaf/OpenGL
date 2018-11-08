@@ -1,4 +1,5 @@
 QT -= gui
+QMAKE_CXXFLAGS += -Wall -Wextra
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
@@ -10,7 +11,7 @@ CONFIG -= app_bundle
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-LIBS += -lGLEW -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -lSDL2 -ldl
+LIBS += -lGLEW -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -lSDL2 -ldl
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -22,7 +23,10 @@ SOURCES += \
     mesh.cpp \
     shader.cpp \
     window.cpp \
-    camera.cpp
+    camera.cpp \
+    texture.cpp \
+    light.cpp \
+    material.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -33,7 +37,11 @@ HEADERS += \
     mesh.h \
     shader.h \
     window.h \
-    camera.h
+    camera.h \
+    stb_image.h \
+    texture.h \
+    light.h \
+    material.h
 
 DISTFILES += \
     Resources/shader.vert \

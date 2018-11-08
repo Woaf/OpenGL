@@ -47,19 +47,54 @@ std::string Shader::ReadFile(const char *fileLocation)
     return content;
 }
 
-GLint Shader::GetProjectionLocation()
+GLuint Shader::GetAmbientIntensityLocation()
+{
+    return uniformAmbientIntensity;
+}
+
+GLuint Shader::GetAmbientColorLocation()
+{
+    return uniformAmbientColor;
+}
+
+GLuint Shader::GetDiffuseIntensityLocation()
+{
+    return uniformDiffuseIntensity;
+}
+
+GLuint Shader::GetDirectionLocation()
+{
+    return uniformDirection;
+}
+
+GLuint Shader::GetSpecularIntensityLocation()
+{
+    return uniformSpecularIntensity;
+}
+
+GLuint Shader::GetShininessLocation()
+{
+    return uniformShininess;
+}
+
+GLuint Shader::GetProjectionLocation()
 {
     return uniformProj;
 }
 
-GLint Shader::GetModelLocation()
+GLuint Shader::GetModelLocation()
 {
     return uniformModel;
 }
 
-GLint Shader::GetViewLocation()
+GLuint Shader::GetViewLocation()
 {
     return uniformView;
+}
+
+GLuint Shader::GetEyePositionLocation()
+{
+    return uniformEyePosition;
 }
 
 void Shader::UseShader()
@@ -105,7 +140,7 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
     if(!result)
     {
         glGetProgramInfoLog(shaderID, sizeof(elog), nullptr, elog);
-        printf("ERROR linking shader!");
+        printf("ERROR linking shader!%s", elog);
         return;
     }
 
@@ -121,6 +156,13 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
     uniformModel = glGetUniformLocation(shaderID, "model");
     uniformProj = glGetUniformLocation(shaderID, "proj");
     uniformView = glGetUniformLocation(shaderID, "view");
+    uniformEyePosition = glGetUniformLocation(shaderID, "eyePosition");
+    uniformAmbientColor = glGetUniformLocation(shaderID, "dirLight.color");
+    uniformAmbientIntensity = glGetUniformLocation(shaderID, "dirLight.ambientIntensity");
+    uniformDirection = glGetUniformLocation(shaderID, "dirLight.direction");
+    uniformDiffuseIntensity = glGetUniformLocation(shaderID, "dirLight.diffuseIntensity");
+    uniformSpecularIntensity = glGetUniformLocation(shaderID, "material.specularIntensity");
+    uniformShininess = glGetUniformLocation(shaderID, "material.shininess");
 }
 
 void Shader::AddShader(GLuint theProgram, const char *shaderCode, GLenum shaderType)
@@ -143,7 +185,7 @@ void Shader::AddShader(GLuint theProgram, const char *shaderCode, GLenum shaderT
     if(!result)
     {
         glGetShaderInfoLog(theShader, sizeof(elog), nullptr, elog);
-        printf("ERROR linking shader!");
+        printf("ERROR linking shader!%s", elog);
         return;
     }
 
