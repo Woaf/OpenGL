@@ -26,7 +26,9 @@ SOURCES += \
     camera.cpp \
     texture.cpp \
     light.cpp \
-    material.cpp
+    material.cpp \
+    directionallight.cpp \
+    pointlight.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -41,7 +43,10 @@ HEADERS += \
     stb_image.h \
     texture.h \
     light.h \
-    material.h
+    material.h \
+    directionallight.h \
+    pointlight.h \
+    commonvalues.h
 
 DISTFILES += \
     Resources/shader.vert \

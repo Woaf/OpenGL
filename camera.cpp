@@ -78,7 +78,6 @@ glm::mat4 Camera::calculateViewMatrix()
 
 Camera::~Camera()
 {
-
 }
 
 void Camera::update()
