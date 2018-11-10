@@ -1,17 +1,13 @@
 #include "camera.h"
 
-Camera::Camera()
-{
-}
+Camera::Camera() {}
 
 Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch, GLfloat startMoveSpeed, GLfloat startTurnSpeed)
 {
     position = startPosition;
     worldUp = startUp;
-
     yaw = startYaw;
     pitch = startPitch;
-
     front = glm::vec3(0.0f, 0.0f, -1.0f);
 
     movementSpeed = startMoveSpeed;
@@ -71,14 +67,17 @@ glm::vec3 Camera::getCameraPosition()
     return position;
 }
 
+glm::vec3 Camera::getCameraDirection()
+{
+    return glm::normalize(front);
+}
+
 glm::mat4 Camera::calculateViewMatrix()
 {
     return glm::lookAt(position, position + front, up);
 }
 
-Camera::~Camera()
-{
-}
+Camera::~Camera() {}
 
 void Camera::update()
 {

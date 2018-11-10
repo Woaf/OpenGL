@@ -18,7 +18,7 @@ public:
 
     ~PointLight();
 
-private:
+protected:
     glm::vec3 position;
 
     GLfloat constant, linear, exponent;

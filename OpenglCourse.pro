@@ -1,5 +1,5 @@
 QT -= gui
-QMAKE_CXXFLAGS += -Wall -Wextra
+# QMAKE_CXXFLAGS += -Wall -Wextra
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
@@ -11,7 +11,7 @@ CONFIG -= app_bundle
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-LIBS += -lGLEW -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -lSDL2 -ldl
+LIBS += -lGLEW -lglfw -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -lSDL2 -ldl -lassimp
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -28,7 +28,8 @@ SOURCES += \
     light.cpp \
     material.cpp \
     directionallight.cpp \
-    pointlight.cpp
+    pointlight.cpp \
+    spotlight.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -46,7 +47,8 @@ HEADERS += \
     material.h \
     directionallight.h \
     pointlight.h \
-    commonvalues.h
+    commonvalues.h \
+    spotlight.h
 
 DISTFILES += \
     Resources/shader.vert \
