@@ -204,7 +204,6 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
 
         snprintf(locBuff, sizeof(locBuff), "spotLights[%d].edge", i);
         uniformSpotLight[i].uniformEdge = glGetUniformLocation(shaderID, locBuff);
-
     }
 }
 

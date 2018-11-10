@@ -29,7 +29,8 @@ SOURCES += \
     material.cpp \
     directionallight.cpp \
     pointlight.cpp \
-    spotlight.cpp
+    spotlight.cpp \
+    model.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -48,7 +49,8 @@ HEADERS += \
     directionallight.h \
     pointlight.h \
     commonvalues.h \
-    spotlight.h
+    spotlight.h \
+    model.h
 
 DISTFILES += \
     Resources/shader.vert \

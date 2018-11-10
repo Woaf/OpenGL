@@ -9,7 +9,7 @@ Texture::Texture()
     fileLoc = "";
 }
 
-Texture::Texture(char *fileLocation)
+Texture::Texture(const char *fileLocation)
 {
     texture_id = 0;
     width = 0;

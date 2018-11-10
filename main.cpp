@@ -11,6 +11,8 @@
 
 #include <commonvalues.h>
 
+#include <assimp/Importer.hpp>
+
 #include <window.h>
 #include <mesh.h>
 #include <shader.h>
@@ -20,6 +22,7 @@
 #include <pointlight.h>
 #include <spotlight.h>
 #include <material.h>
+#include  <model.h>
 
 static Window mainWindow;
 static Camera camera;
@@ -33,6 +36,10 @@ static SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 static Material shinyMaterial;
 static Material dullMaterial;
+
+Model bmw;
+Model wolf;
+Model cat;
 
 static GLfloat deltaTime = 0.0f;
 static GLfloat lastTime = 0.0f;
@@ -116,9 +123,9 @@ void createObjects()
 
     GLfloat floor_vertices[] = {
         -10.0f, 0.0f, -10.f,  0.0f, 0.0f,   0.0f, -1.0f, 0.0f,
-        10.0f, 0.0f, -10.0f,  3.0f, 0.0f,   0.0f, -1.0f, 0.0f,
-        -10.0f, 0.0f, 10.0f,  0.0f, 3.0f,   0.0f, -1.0f, 0.0f,
-        10.0f, 0.0f, 10.0f,   3.0f, 3.0f,   0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, -10.0f,  2.0f, 0.0f,   0.0f, -1.0f, 0.0f,
+        -10.0f, 0.0f, 10.0f,  0.0f, 2.0f,   0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, 10.0f,   2.0f, 2.0f,   0.0f, -1.0f, 0.0f,
     };
 
     calcAverageNormals(indices, 12, vertices, 32, 8, 5);
@@ -150,46 +157,47 @@ int main()
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
 
     brickTexture = Texture("../OpenGL/Resources/brick.png");
-    brickTexture.loadTexture();
+    brickTexture.loadTextureA();
     groundTexture = Texture("../OpenGL/Resources/grass.png");
-    groundTexture.loadTexture();
+    groundTexture.loadTextureA();
 
     shinyMaterial = Material(4.0f, 256);
     dullMaterial  = Material(1.0f, 4);
 
+    bmw = Model();
+    bmw.loadModel("../OpenGL/Resources/Models/BMW X5 4.obj");
+
+    wolf = Model();
+    wolf.loadModel("../OpenGL/Resources/Models/Wolf.obj");
+
+    cat = Model();
+    cat.loadModel("../OpenGL/Resources/Models/cat.obj");
+
     // DIRECTIONAL LIGHT
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-                                 0.1f, 0.1f,
-                                 0.0f, 0.0f, -1.0f);
+                                 0.2f, 0.4f,
+                                 0.0f, -1.0f, -1.0f);
 
     // POINT LIGHTS
     unsigned int pointLightCount = 0;
     pointLights[0] = PointLight(0.0, 0.0f, 1.0f,
-                                0.0f, 0.1f,
+                                0.6f, 0.1f,
                                 -2.0f, 5.0f, 0.0f,
                                 0.3f, 0.2f, 0.1f);
     pointLightCount++;
 
     pointLights[1] = PointLight(1.0f, 0.0f, 0.0f,
-                                0.0f, 0.1f,
+                                0.6f, 0.1f,
                                 2.0f, 5.0f, 0.0f,
                                 0.3f, 0.1f, 0.1f);
     pointLightCount++;
 
     // SPOT LIGHTS
     unsigned int spotLightCount = 0;
-    spotLights[0] = SpotLight(1.0, 1.0f, 1.0f,
-                             0.0f, 2.0f,
-                             0.0f, 0.0f, 0.0f,
-                             0.0f, -1.0f, 0.0f,
-                             1.0f, 0.0f, 0.0f,
-                             20.0f);
-    spotLightCount++;
-
-    spotLights[1] = SpotLight(1.0, 1.0f, 1.0f,
-                             0.0f, 1.0f,
-                             0.0f, -1.5f, 0.0f,
-                             -100.0f, -1.0f, 0.0f,
+    spotLights[0] = SpotLight(1.0, 1.0f, 0.0f,
+                             0.1f, 2.0f,
+                             1.0f, 1.0f, 1.0f,
+                             0.0f, 0.0f, -1.0f,
                              1.0f, 0.0f, 0.0f,
                              20.0f);
     spotLightCount++;
@@ -240,13 +248,6 @@ int main()
 
         spotLights[0].setFlash(lowerLight, camera.getCameraDirection());
 
-        /*
-        pointLights[1] = PointLight(sin(x), cos(x), 1.0f,
-                                    0.1f, 0.1f,
-                                    7*cos(x*10), 7*sin(x*10), 0.0f,
-                                    0.2f, 0.1f, 0.1f);
-        */
-
         shaderList[0].setDirectionalLight(&mainLight);
         shaderList[0].setPointLights(pointLights, pointLightCount);
         shaderList[0].setSpotLights(spotLights, spotLightCount);
@@ -277,6 +278,32 @@ int main()
         dullMaterial.useMaterial(uniformSpecularIntensity, uniformShininess);
 
         meshList[1]->RenderMesh();
+
+        // BMW
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(4.0f, -2.0f, -4.0f));
+        model= glm::scale(model, glm::vec3(0.01, 0.01, 0.01));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        shinyMaterial.useMaterial(uniformSpecularIntensity, uniformShininess);
+        bmw.renderModel();
+
+        // WOLF
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 4.0f));
+        //model = glm::rotate(model, glm::radians(x), glm::vec3(0));
+        model = glm::scale(model, glm::vec3(0.01, 0.01, 0.01));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        shinyMaterial.useMaterial(uniformSpecularIntensity, uniformShininess);
+        wolf.renderModel();
+
+        // CAT
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-4.0f, -1.7f, 0.0f));
+        model = glm::rotate(model, x*10, glm::vec3(0, 1, 0));
+        model = glm::scale(model, glm::vec3(0.01, 0.01, 0.01));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        shinyMaterial.useMaterial(uniformSpecularIntensity, uniformShininess);
+        cat.renderModel();
 
         glUseProgram(0);
 

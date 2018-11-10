@@ -8,7 +8,7 @@ class Texture
 {
 public:
     Texture();
-    Texture(char* fileLocation);
+    Texture(const char* fileLocation);
 
     bool loadTexture();
     bool loadTextureA();
@@ -21,7 +21,7 @@ private:
     GLuint texture_id;
     int width, height, bitDepth;
 
-    char* fileLoc;
+    const char* fileLoc;
 };
 
 #endif // TEXTURE_H
