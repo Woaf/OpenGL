@@ -73,6 +73,16 @@ All you have to do to use the GLM packages, is to install GLM via Terminal `sudo
 
 I think, if you also want the documentation for it, then you can `sudo apt-get install libglm-doc` as well, but I'm not sure about this.
 
+## ASSIMP
+Further on in the project, we would like to import 3D meshes, that were created in a 3D modelling program.
+To do this, we are goind to use ASSIMP (assets import) library that will do exactly what we want.
+
+To install ASSIMP (on linux), write the fowing command in terminal: 
+```
+sudo apt get install libassimp-dev
+```
+then append `-lassimp` to the LIBS flags in the .pro file of the QT project. 
+
 ## Your set-up is ready! 
 You can begin coding now :) 
 
