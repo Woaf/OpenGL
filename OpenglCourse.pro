@@ -31,7 +31,8 @@ SOURCES += \
     pointlight.cpp \
     spotlight.cpp \
     model.cpp \
-    shadowmap.cpp
+    shadowmap.cpp \
+    omnishadowmap.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -52,11 +53,15 @@ HEADERS += \
     commonvalues.h \
     spotlight.h \
     model.h \
-    shadowmap.h
+    shadowmap.h \
+    omnishadowmap.h
 
 DISTFILES += \
     Resources/shader.vert \
     Resources/shader.frag \
     Resources/SDL_WindowCreation.txt \
     Resources/directional_shadow_map.vert \
-    Resources/directional_shadow_map.frag
+    Resources/directional_shadow_map.frag \
+    Resources/omni_shadow_map.frag \
+    Resources/omni_shadow_map.vert \
+    Resources/omni_shadow_map.geom

@@ -22,6 +22,7 @@ public:
 
     void CreateFromString(const char* vertexCode, const char* fragmentCode);
     void CreateFromFiles(const char* vertexLocation, const char* fragLocation);
+    void CreateFromFiles(const char* vertexLocation, const char* geomLocation, const char* fragLocation);
     std::string ReadFile(const char* fileLocation);
 
     GLuint GetProjectionLocation()        { return uniformProj; }
@@ -34,6 +35,8 @@ public:
     GLuint GetSpecularIntensityLocation() { return uniformSpecularIntensity; }
     GLuint GetShininessLocation()         { return uniformShininess; }
     GLuint GetEyePositionLocation()       { return uniformEyePosition; }
+    GLuint GetOmniLightPosLocation()      { return uniformOmniLightPos; }
+    GLuint GetFarPlaceLocation()          { return uniformFarPlane; }
 
     void setDirectionalLight(DirectionalLight* dLight);
     void setPointLights(PointLight* pLight, unsigned int lightCount);
@@ -41,6 +44,7 @@ public:
     void setTexture(GLuint textureUnit);
     void setDirectionalShadowMap(GLuint textureUnit);
     void setDirectionalLightTransform(glm::mat4* lTransform);
+    void setLightMatrices(std::vector<glm::mat4> lightMatrices);
 
     void UseShader()                      { glUseProgram(shaderID); }
     void ClearShader();
@@ -54,7 +58,10 @@ private:
     GLuint shaderID, uniformProj, uniformModel, uniformView, uniformEyePosition,
         uniformSpecularIntensity, uniformShininess, uniformTexture,
         uniformDirectionalLightTransform,
-        uniformDirectionalShadowMap;
+        uniformDirectionalShadowMap,
+        uniformOmniLightPos, uniformFarPlane;
+
+    GLuint uniformLightMatrices[6];
 
     struct {
         GLuint uniformColor;
@@ -96,7 +103,10 @@ private:
 
 
     void CompileShader(const char* vertexCode, const char* fragmentCode);
+    void CompileShader(const char* vertexCode, const char* geomCode, const char* fragmentCode);
     void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType);
+
+    void compileProgram();
 };
 
 #endif // SHADER_H
