@@ -30,7 +30,8 @@ SOURCES += \
     directionallight.cpp \
     pointlight.cpp \
     spotlight.cpp \
-    model.cpp
+    model.cpp \
+    shadowmap.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -50,9 +51,12 @@ HEADERS += \
     pointlight.h \
     commonvalues.h \
     spotlight.h \
-    model.h
+    model.h \
+    shadowmap.h
 
 DISTFILES += \
     Resources/shader.vert \
     Resources/shader.frag \
-    Resources/SDL_WindowCreation.txt
+    Resources/SDL_WindowCreation.txt \
+    Resources/directional_shadow_map.vert \
+    Resources/directional_shadow_map.frag
