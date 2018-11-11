@@ -22,7 +22,7 @@
 #include <pointlight.h>
 #include <spotlight.h>
 #include <material.h>
-#include  <model.h>
+#include <model.h>
 
 static GLuint uniformProj = 0,
        uniformModel = 0,
@@ -33,13 +33,10 @@ static GLuint uniformProj = 0,
        uniformOmniLightPos = 0,
        uniformFarPlane = 0;
 
-static unsigned int pointLightCount = 0;
-static unsigned int spotLightCount = 0;
-
-static GLfloat rotateAngle = 0.0f;
-
 static Window mainWindow;
 
+static std::vector<Mesh*> meshList;
+static std::vector<Shader> shaderList;
 static Shader directionalShadowShader;
 static Shader omniShadowShader;
 
@@ -48,10 +45,6 @@ static Camera camera;
 static Texture brickTexture;
 static Texture groundTexture;
 
-static DirectionalLight mainLight;
-static PointLight pointLights[MAX_POINT_LIGHTS];
-static SpotLight spotLights[MAX_SPOT_LIGHTS];
-
 static Material shinyMaterial;
 static Material dullMaterial;
 
@@ -59,11 +52,18 @@ static Model bmw;
 static Model wolf;
 static Model cat;
 
+static DirectionalLight mainLight;
+static PointLight pointLights[MAX_POINT_LIGHTS];
+static SpotLight spotLights[MAX_SPOT_LIGHTS];
+
+static unsigned int pointLightCount = 0;
+static unsigned int spotLightCount = 0;
+
+static GLfloat rotateAngle = 0.0f;
+
 static GLfloat deltaTime = 0.0f;
 static GLfloat lastTime = 0.0f;
 
-static std::vector<Mesh*> meshList;
-static std::vector<Shader> shaderList;
 
 static const char* vShader = "../OpenGL/Resources/shader.vert";
 
@@ -166,10 +166,10 @@ void CreateShaders()
     directionalShadowShader = Shader();
     directionalShadowShader.CreateFromFiles("../OpenGL/Resources/directional_shadow_map.vert",
                                             "../OpenGL/Resources/directional_shadow_map.frag");
-
+    omniShadowShader = Shader();
     omniShadowShader.CreateFromFiles("../OpenGL/Resources/omni_shadow_map.vert",
                                      "../OpenGL/Resources/omni_shadow_map.geom",
-                                     "../OpenGL/Resources/directional_shadow_map.frag");
+                                     "../OpenGL/Resources/omni_shadow_map.frag");
 }
 
 void renderScene()
@@ -189,8 +189,8 @@ void renderScene()
     model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-    groundTexture.useTexture();
-    dullMaterial.useMaterial(uniformSpecularIntensity, uniformShininess);
+    brickTexture.useTexture();
+    shinyMaterial.useMaterial(uniformSpecularIntensity, uniformShininess);
 
     meshList[1]->RenderMesh();
 
@@ -236,6 +236,8 @@ void directionalShadowMapPass(DirectionalLight* light)
     glm::mat4 placeholder = light->calculateLightTransform();
     directionalShadowShader.setDirectionalLightTransform(&placeholder);
 
+    directionalShadowShader.validate();
+
     renderScene();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -258,6 +260,8 @@ void OmniShadowMapPass(PointLight* light)
     glUniform3f(uniformOmniLightPos, light->getPosition().x, light->getPosition().y, light->getPosition().z);
     glUniform1f(uniformFarPlane, light->getFarPlane());
     omniShadowShader.setLightMatrices(light->calculateLightTransform());
+
+    omniShadowShader.validate();
 
     renderScene();
 
@@ -288,19 +292,21 @@ void renderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
                 camera.getCameraPosition().z);
 
     shaderList[0].setDirectionalLight(&mainLight);
-    shaderList[0].setPointLights(pointLights, pointLightCount);
-    shaderList[0].setSpotLights(spotLights, spotLightCount);
+    shaderList[0].setPointLights(pointLights, pointLightCount, 3, 0);
+    shaderList[0].setSpotLights(spotLights, spotLightCount, 3+pointLightCount, pointLightCount);
     glm::mat4 placeholder = mainLight.calculateLightTransform();
     shaderList[0].setDirectionalLightTransform(&placeholder);
 
-    mainLight.getShadowMap()->read(GL_TEXTURE1);
-    shaderList[0].setTexture(0);
-    shaderList[0].setDirectionalShadowMap(1);
+    mainLight.getShadowMap()->read(GL_TEXTURE2);
+    shaderList[0].setTexture(1);
+    shaderList[0].setDirectionalShadowMap(2);
 
     glm::vec3 lowerLight = camera.getCameraPosition();
-    lowerLight.y -= 0.1f;
+    lowerLight.y -= 0.5f;
 
     spotLights[0].setFlash(lowerLight, camera.getCameraDirection());
+
+    shaderList[0].validate();
 
     renderScene();
 }
@@ -335,34 +341,34 @@ int main()
     // DIRECTIONAL LIGHT
     mainLight = DirectionalLight(2048, 2048,
                                  1.0f, 1.0f, 1.0f,
-                                 0.2f, 0.4f,
+                                 0.0f, 0.1f,
                                  0.0f, -15.0f, -10.0f);
 
     // POINT LIGHTS
     pointLights[0] = PointLight(1024, 1024,
                                 0.01f, 100.0f,
                                 0.0, 0.0f, 1.0f,
-                                0.6f, 0.1f,
-                                -2.0f, 5.0f, 0.0f,
-                                0.3f, 0.2f, 0.1f);
+                                0.0f, 1.0f,
+                                -3.0f, 5.0f, 0.0f,
+                                0.3f, 0.2f, 0.01f);
     pointLightCount++;
 
     pointLights[1] = PointLight(1024, 1024,
                                 0.01f, 100.0f,
-                                1.0f, 0.0f, 0.0f,
-                                0.6f, 0.1f,
-                                2.0f, 5.0f, 0.0f,
-                                0.3f, 0.1f, 0.1f);
+                                0.0f, 1.0f, 0.0f,
+                                0.0f, 1.0f,
+                                3.0f, 5.0f, 0.0f,
+                                0.3f, 0.2f, 0.01f);
     pointLightCount++;
 
     // SPOT LIGHTS
     spotLights[0] = SpotLight(1024, 1024,
                               0.01f, 100.0f,
                               1.0, 1.0f, 1.0f,
-                              0.1f, 1.0f,
-                              1.0f, 1.0f, 1.0f,
+                              0.0f, 2.0f,
+                              0.0f, 0.0f, 0.0f,
                               0.0f, 0.0f, -1.0f,
-                              1.0f, 0.3f, 0.1f,
+                              1.0f, 0.0f, 0.1f,
                               20.0f);
     spotLightCount++;
 
@@ -373,8 +379,6 @@ int main()
                             (GLfloat)mainWindow.getBufferWidth()/(GLfloat)mainWindow.getBufferHeight(),
                             near,
                             far);
-
-
 
     float x = 0.0f;
 
@@ -389,6 +393,12 @@ int main()
         glfwPollEvents();
         camera.keyControl(mainWindow.getKeys(), deltaTime);
         camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+
+        if(mainWindow.getKeys()[GLFW_KEY_E])
+        {
+            spotLights[0].toggle();
+            mainWindow.getKeys()[GLFW_KEY_E] = false;
+        }
 
         directionalShadowMapPass(&mainLight);
         for(size_t i = 0; i < pointLightCount; i++)

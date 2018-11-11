@@ -20,9 +20,9 @@ public:
                   GLuint constLocation, GLuint linLocation, GLuint expLocation);
 
     std::vector<glm::mat4> calculateLightTransform();
-    GLfloat getFarPlane();
 
     glm::vec3 getPosition();
+    GLfloat getFarPlane();
 
     ~PointLight();
 
@@ -30,7 +30,6 @@ protected:
     glm::vec3 position;
 
     GLfloat constant, linear, exponent;
-
     GLfloat farPlane;
 };
 

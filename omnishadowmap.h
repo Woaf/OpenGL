@@ -8,7 +8,7 @@ class OmniShadowMap : public ShadowMap
 public:
     OmniShadowMap();
 
-    bool Init(GLuint width, GLuint height);
+    bool Init(unsigned int width, unsigned int height);
 
     void write();
 

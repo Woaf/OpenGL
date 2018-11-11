@@ -23,12 +23,16 @@ public:
 
     void setFlash(glm::vec3 pos, glm::vec3 dir);
 
+    void toggle() { isOn = !isOn; }
+
     ~SpotLight();
 
 private:
     glm::vec3 direction;
 
     GLfloat edge, procEdge;
+
+    bool isOn;
 };
 
 #endif // SPOTLIGHT_H
