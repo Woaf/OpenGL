@@ -82,8 +82,9 @@ void Shader::setSpotLights(SpotLight *sLight, unsigned int lightCount)
     {
         sLight[i].useLight(uniformSpotLight[i].uniformAmbientIntensity, uniformSpotLight[i].uniformColor,
                            uniformSpotLight[i].uniformDiffuseIntensity, uniformSpotLight[i].uniformPosition,
-                           uniformSpotLight[i].uniformDirection, uniformSpotLight[i].uniformEdge,
-                           uniformSpotLight[i].uniformConstant, uniformSpotLight[i].uniformLinear, uniformSpotLight[i].uniformExponent);
+                           uniformSpotLight[i].uniformDirection,
+                           uniformSpotLight[i].uniformConstant, uniformSpotLight[i].uniformLinear, uniformSpotLight[i].uniformExponent,
+                           uniformSpotLight[i].uniformEdge);
     }
 }
 

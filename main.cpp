@@ -148,7 +148,7 @@ void CreateShaders()
 
 int main()
 {
-    mainWindow = Window(1366, 768);
+    mainWindow = Window(1280, 720);
     mainWindow.Initialise();
 
     createObjects();
@@ -227,12 +227,16 @@ int main()
 
         x += deltaTime / 10.0f;
 
+        mainLight = DirectionalLight(glm::max(cos(x), 0.0f), glm::max(sin(x), 0.0f), 1.0f,
+                                     0.2f, 0.4f,
+                                     0.0f, sin(x), -1.0f);
+
         glfwPollEvents();
         camera.keyControl(mainWindow.getKeys(), deltaTime);
         camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 
-        //glClearColor(0.2275f, 0.251f, 0.3530f, 1.0f);
-        glClearColor(0.0, 0.0, 0.0, 1.0f);
+        glClearColor(0.2275f/5, 0.251f/5, 0.3530f/5, 1.0f);
+        //glClearColor(0.0, 0.0, 0.0, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shaderList[0].UseShader();
