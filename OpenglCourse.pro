@@ -32,7 +32,8 @@ SOURCES += \
     spotlight.cpp \
     model.cpp \
     shadowmap.cpp \
-    omnishadowmap.cpp
+    omnishadowmap.cpp \
+    skybox.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -54,7 +55,8 @@ HEADERS += \
     spotlight.h \
     model.h \
     shadowmap.h \
-    omnishadowmap.h
+    omnishadowmap.h \
+    skybox.h
 
 DISTFILES += \
     Resources/shader.vert \
@@ -64,4 +66,6 @@ DISTFILES += \
     Resources/directional_shadow_map.frag \
     Resources/omni_shadow_map.frag \
     Resources/omni_shadow_map.vert \
-    Resources/omni_shadow_map.geom
+    Resources/omni_shadow_map.geom \
+    Resources/skybox.vert \
+    Resources/skybox.frag

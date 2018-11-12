@@ -24,6 +24,8 @@
 #include <material.h>
 #include <model.h>
 
+#include <skybox.h>
+
 static GLuint uniformProj = 0,
        uniformModel = 0,
        uniformView = 0,
@@ -64,6 +66,7 @@ static GLfloat rotateAngle = 0.0f;
 static GLfloat deltaTime = 0.0f;
 static GLfloat lastTime = 0.0f;
 
+static Skybox skybox;
 
 static const char* vShader = "../OpenGL/Resources/shader.vert";
 
@@ -219,7 +222,7 @@ void renderScene()
     model = glm::translate(model, glm::vec3(-4.0f, -1.3f, 0.0f));
     model = glm::scale(model, glm::vec3(0.03, 0.03, 0.03));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-    shinyMaterial.useMaterial(uniformSpecularIntensity, uniformShininess);
+    dullMaterial.useMaterial(uniformSpecularIntensity, uniformShininess);
     cat.renderModel();
 }
 
@@ -270,6 +273,13 @@ void OmniShadowMapPass(PointLight* light)
 
 void renderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
 {
+    glViewport(0, 0, 1280, 720);
+
+    glClearColor(0.2275f/5, 0.251f/5, 0.3530f/5, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    skybox.drawSkybox(viewMatrix, projectionMatrix);
+
     shaderList[0].UseShader();
 
     uniformModel = shaderList[0].GetModelLocation();
@@ -278,11 +288,6 @@ void renderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
     uniformEyePosition = shaderList[0].GetEyePositionLocation();
     uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
     uniformShininess = shaderList[0].GetShininessLocation();
-
-    glViewport(0, 0, 1280, 720);
-
-    glClearColor(0.2275f/5, 0.251f/5, 0.3530f/5, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUniformMatrix4fv(uniformProj, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
@@ -302,7 +307,7 @@ void renderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
     shaderList[0].setDirectionalShadowMap(2);
 
     glm::vec3 lowerLight = camera.getCameraPosition();
-    lowerLight.y -= 0.5f;
+    lowerLight.y -= 0.2f;
 
     spotLights[0].setFlash(lowerLight, camera.getCameraDirection());
 
@@ -342,12 +347,12 @@ int main()
     mainLight = DirectionalLight(2048, 2048,
                                  1.0f, 1.0f, 1.0f,
                                  0.0f, 0.1f,
-                                 0.0f, -15.0f, -10.0f);
+                                 -10.0f, -15.0f, 10.0f);
 
     // POINT LIGHTS
     pointLights[0] = PointLight(1024, 1024,
                                 0.01f, 100.0f,
-                                0.0, 0.0f, 1.0f,
+                                0.2, 0.4f, 1.0f,
                                 0.0f, 1.0f,
                                 -3.0f, 5.0f, 0.0f,
                                 0.3f, 0.2f, 0.01f);
@@ -355,7 +360,7 @@ int main()
 
     pointLights[1] = PointLight(1024, 1024,
                                 0.01f, 100.0f,
-                                0.0f, 1.0f, 0.0f,
+                                1.0f, 0.4f, 0.2f,
                                 0.0f, 1.0f,
                                 3.0f, 5.0f, 0.0f,
                                 0.3f, 0.2f, 0.01f);
@@ -368,9 +373,19 @@ int main()
                               0.0f, 2.0f,
                               0.0f, 0.0f, 0.0f,
                               0.0f, 0.0f, -1.0f,
-                              1.0f, 0.0f, 0.1f,
+                              1.0f, 0.2f, 0.1f,
                               20.0f);
     spotLightCount++;
+
+    std::vector<std::string> skyboxFaces;
+    skyboxFaces.push_back("../OpenGL/Resources/Skybox/siege_rt.tga");
+    skyboxFaces.push_back("../OpenGL/Resources/Skybox/siege_lf.tga");
+    skyboxFaces.push_back("../OpenGL/Resources/Skybox/siege_up.tga");
+    skyboxFaces.push_back("../OpenGL/Resources/Skybox/siege_dn.png");
+    skyboxFaces.push_back("../OpenGL/Resources/Skybox/siege_bk.tga");
+    skyboxFaces.push_back("../OpenGL/Resources/Skybox/siege_ft.tga");
+
+    skybox = Skybox(skyboxFaces);
 
     GLfloat near = 0.01f;
     GLfloat far = 100.0f;
@@ -380,15 +395,11 @@ int main()
                             near,
                             far);
 
-    float x = 0.0f;
-
     while(!mainWindow.getShouldClose())
     {
         GLfloat now = glfwGetTime();
         deltaTime = now - lastTime;
         lastTime = now;
-
-        x += deltaTime / 10.0f;
 
         glfwPollEvents();
         camera.keyControl(mainWindow.getKeys(), deltaTime);
