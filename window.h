@@ -10,8 +10,8 @@
 class Window
 {
 public:
-    Window() : width (720), height(400) { for(size_t i = 0; i < 1024; i++) {keys[i] = 0;} }
-    Window(GLint windowWidth, GLint windowHeight) : width(windowWidth), height(windowHeight) { for(size_t i = 0; i < 1024; i++) {keys[i] = 0;} }
+    Window() : width (720), height(400), keys() {}
+    Window(GLint windowWidth, GLint windowHeight) : width(windowWidth), height(windowHeight), keys() {}
 
     int Initialise();
     GLFWwindow* getWindow() {return mainWindow;}
