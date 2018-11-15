@@ -79,7 +79,7 @@ To do this, we are goind to use ASSIMP (assets import) library that will do exac
 
 To install ASSIMP (on linux), write the fowing command in terminal: 
 ```
-sudo apt get install libassimp-dev
+sudo apt get-install libassimp-dev
 ```
 then append `-lassimp` to the LIBS flags in the .pro file of the QT project. 
 
